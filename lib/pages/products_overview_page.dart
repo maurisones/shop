@@ -8,7 +8,7 @@ import 'package:shop/models/product_list.dart';
 import 'package:shop/utils/app_routes.dart';
 
 import '../components/product_grid.dart';
-import '../components/product_item.dart';
+import '../components/product_grid_item.dart';
 import '../models/cart.dart';
 import '../models/product.dart';
 
