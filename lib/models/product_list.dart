@@ -25,7 +25,18 @@ class ProductList with ChangeNotifier {
   }
 
   void addProduct(Product product) {
-    _items.add(product);
+    int index = _items.indexWhere((element) => element.id == product.id);
+    if (index == -1) {
+      _items.add(product);
+    } else {
+      _items[index] = product;
+    }
+    notifyListeners();
+  }
+
+  void removeProduct(String productId) {
+    int index = _items.indexWhere((element) => element.id == productId);
+    _items.removeAt(index);
     notifyListeners();
   }
 }
