@@ -28,10 +28,11 @@ class ProductList with ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> addProduct(Product product) {
+  // função não tem return pois ela retorna um Feature<void>
+  Future<void> addProduct(Product product) async {
     int index = _items.indexWhere((element) => element.id == product.id);
     if (index == -1) {
-      final future = http.post(
+      final response = await http.post(
         Uri.parse('${urlBase}/teste.json'),
         body: jsonEncode({
           "name": product.name,
@@ -42,20 +43,18 @@ class ProductList with ChangeNotifier {
         }),
       );
 
-      return future.then<void>((response) {
-        final id = jsonDecode(response.body)['name'].toString();
-        _items.add(Product(
-          id: id,
-          name: product.name,
-          description: product.description,
-          price: product.price,
-          imageUrl: product.imageUrl,
-        ));
-        notifyListeners();
-      });
+      final id = jsonDecode(response.body)['name'].toString();
+      _items.add(Product(
+        id: id,
+        name: product.name,
+        description: product.description,
+        price: product.price,
+        imageUrl: product.imageUrl,
+      ));
+      notifyListeners();
     } else {
       print(product.id);
-      final future = http.put(
+      final response = await http.put(
         Uri.parse('${urlBase}/teste.json/${product.id}'),
         body: jsonEncode({
           "name": product.name,
@@ -65,11 +64,10 @@ class ProductList with ChangeNotifier {
           "isFavorite": product.isFavorite,
         }),
       );
-      return future.then((response) {
-        print(response.statusCode);
-        _items[index] = product;
-        notifyListeners();
-      });
+
+      print(response.statusCode);
+      _items[index] = product;
+      notifyListeners();
     }
   }
 

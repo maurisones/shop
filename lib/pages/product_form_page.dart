@@ -30,7 +30,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
   // _formKey.currentState?.save() irá acionar o onSaved de cada campo do formulario
   // que irá transferir o valor do campo para o mapa para depois criar um objeto
   // Product para salvar.
-  void _submitForm() {
+  void _submitForm() async {
     final isValid = _formKey.currentState?.validate() ?? false;
     if (!isValid) {
       return;
@@ -55,10 +55,11 @@ class _ProductFormPageState extends State<ProductFormPage> {
       imageUrl: _formData['imageUrl'] as String,
     );
 
-    Provider.of<ProductList>(context, listen: false)
-        .addProduct(product)
-        .catchError((error) {
-      return showDialog<void>(
+    try {
+      await Provider.of<ProductList>(context, listen: false)
+          .addProduct(product);
+    } catch (error) {
+      showDialog<void>(
         context: context,
         builder: (context) => AlertDialog(
           title: Text('Ocorreu um erro!'),
@@ -71,10 +72,10 @@ class _ProductFormPageState extends State<ProductFormPage> {
           ],
         ),
       );
-    }).then((value) {
+    } finally {
       setState(() => _isLoading = false);
       Navigator.of(context).pop();
-    });
+    }
   }
 
   // para pegar o produto a ser editado, depende de setar o initialvalue de cada campo se
@@ -193,6 +194,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                                   url.toLowerCase().endsWith('.png') ||
                                       url.toLowerCase().endsWith('.jpg') ||
                                       url.toLowerCase().endsWith('.jpg') ||
+                                      url.toLowerCase().endsWith('.jpeg') ||
                                       url.toLowerCase().endsWith('.gif');
                               if (!uriValid) {
                                 return 'Url inválida!';
@@ -222,11 +224,7 @@ class _ProductFormPageState extends State<ProductFormPage> {
                           alignment: Alignment.center,
                           child: _imageUrlController.text.isEmpty
                               ? Text('Preview')
-                              : FittedBox(
-                                  child:
-                                      Image.network(_imageUrlController.text),
-                                  fit: BoxFit.cover,
-                                ),
+                              : Image.network(_imageUrlController.text),
                         )
                       ],
                     )
