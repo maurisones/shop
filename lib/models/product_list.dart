@@ -1,8 +1,12 @@
+import 'dart:convert';
+
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:shop/data/dummy_data.dart';
 import 'package:shop/models/product.dart';
 
 class ProductList with ChangeNotifier {
+  final String urlBase = 'https://teste-1a75c-default-rtdb.firebaseio.com';
   List<Product> _items = dummyProducts;
 
   bool _showFavoriteOnly = false;
@@ -24,14 +28,49 @@ class ProductList with ChangeNotifier {
     notifyListeners();
   }
 
-  void addProduct(Product product) {
+  Future<void> addProduct(Product product) {
     int index = _items.indexWhere((element) => element.id == product.id);
     if (index == -1) {
-      _items.add(product);
+      final future = http.post(
+        Uri.parse('${urlBase}/teste.json'),
+        body: jsonEncode({
+          "name": product.name,
+          "description": product.description,
+          "price": product.price,
+          "imageUrl": product.imageUrl,
+          "isFavorite": product.isFavorite,
+        }),
+      );
+
+      return future.then<void>((response) {
+        final id = jsonDecode(response.body)['name'].toString();
+        _items.add(Product(
+          id: id,
+          name: product.name,
+          description: product.description,
+          price: product.price,
+          imageUrl: product.imageUrl,
+        ));
+        notifyListeners();
+      });
     } else {
-      _items[index] = product;
+      print(product.id);
+      final future = http.put(
+        Uri.parse('${urlBase}/teste.json/${product.id}'),
+        body: jsonEncode({
+          "name": product.name,
+          "description": product.description,
+          "price": product.price,
+          "imageUrl": product.imageUrl,
+          "isFavorite": product.isFavorite,
+        }),
+      );
+      return future.then((response) {
+        print(response.statusCode);
+        _items[index] = product;
+        notifyListeners();
+      });
     }
-    notifyListeners();
   }
 
   void removeProduct(String productId) {

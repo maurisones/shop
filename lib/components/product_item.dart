@@ -48,13 +48,13 @@ class ProductItem extends StatelessWidget {
                         onPressed: () {
                           Navigator.of(context).pop(false);
                         },
-                        child: Text('Não'),
+                        child: const Text('Não'),
                       ),
                       TextButton(
                         onPressed: () {
                           Navigator.of(context).pop(true);
                         },
-                        child: Text('Sim'),
+                        child: const Text('Sim'),
                       ),
                     ],
                   ),
