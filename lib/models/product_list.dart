@@ -3,13 +3,38 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:shop/data/dummy_data.dart';
+import 'package:shop/exceptions/http_exception.dart';
 import 'package:shop/models/product.dart';
 
 class ProductList with ChangeNotifier {
-  final String urlBase = 'https://teste-1a75c-default-rtdb.firebaseio.com';
-  List<Product> _items = dummyProducts;
+  final String baseUrl =
+      'https://teste-1a75c-default-rtdb.firebaseio.com/teste';
+  //List<Product> _items = dummyProducts;
+  List<Product> _items = [];
 
   bool _showFavoriteOnly = false;
+
+  Future<void> loadProducts() async {
+    final response = await http.get(Uri.parse('${baseUrl}.json'));
+    print(jsonDecode(response.body));
+
+    _items.clear();
+
+    Map<String, dynamic> data = jsonDecode(response.body);
+    if (data != null) {
+      data.forEach((productId, productData) {
+        _items.add(Product(
+          id: productId,
+          name: productData['name'],
+          description: productData['description'],
+          price: productData['price'] as double,
+          imageUrl: productData['imageUrl'],
+          isFavorite: productData['isFavorite'],
+        ));
+      });
+    }
+    notifyListeners();
+  }
 
   List<Product> get items {
     if (_showFavoriteOnly) {
@@ -33,7 +58,7 @@ class ProductList with ChangeNotifier {
     int index = _items.indexWhere((element) => element.id == product.id);
     if (index == -1) {
       final response = await http.post(
-        Uri.parse('${urlBase}/teste.json'),
+        Uri.parse('${baseUrl}.json'),
         body: jsonEncode({
           "name": product.name,
           "description": product.description,
@@ -54,8 +79,8 @@ class ProductList with ChangeNotifier {
       notifyListeners();
     } else {
       print(product.id);
-      final response = await http.put(
-        Uri.parse('${urlBase}/teste.json/${product.id}'),
+      final response = await http.patch(
+        Uri.parse('${baseUrl}/${product.id}.json'),
         body: jsonEncode({
           "name": product.name,
           "description": product.description,
@@ -71,9 +96,19 @@ class ProductList with ChangeNotifier {
     }
   }
 
-  void removeProduct(String productId) {
-    int index = _items.indexWhere((element) => element.id == productId);
-    _items.removeAt(index);
+  Future<void> removeProduct(String productId) async {
+    final response =
+        await http.delete(Uri.parse('${baseUrl}/${productId}.json'));
+
+    if (response.statusCode == 200) {
+      int index = _items.indexWhere((element) => element.id == productId);
+      _items.removeAt(index);
+    } else {
+      throw HttpException(
+          msg: 'Não foi possível excluir o produto!',
+          statusCode: response.statusCode);
+    }
+
     notifyListeners();
   }
 }

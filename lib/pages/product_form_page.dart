@@ -59,7 +59,8 @@ class _ProductFormPageState extends State<ProductFormPage> {
       await Provider.of<ProductList>(context, listen: false)
           .addProduct(product);
     } catch (error) {
-      showDialog<void>(
+      // show dialog retorna um Future então preciso do await para esperar
+      await showDialog<void>(
         context: context,
         builder: (context) => AlertDialog(
           title: Text('Ocorreu um erro!'),

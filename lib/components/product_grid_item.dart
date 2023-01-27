@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:shop/models/product_list.dart';
 import 'package:shop/pages/product_detail_page.dart';
 import 'package:shop/utils/app_routes.dart';
 
@@ -30,6 +31,8 @@ class ProductGridItem extends StatelessWidget {
           leading: IconButton(
             onPressed: () {
               product.toggleFavorite();
+              Provider.of<ProductList>(context, listen: false)
+                  .addProduct(product);
             },
             icon: Icon(
                 product.isFavorite ? Icons.favorite : Icons.favorite_border),
