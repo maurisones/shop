@@ -5,10 +5,10 @@ import 'package:http/http.dart' as http;
 import 'package:shop/data/dummy_data.dart';
 import 'package:shop/exceptions/http_exception.dart';
 import 'package:shop/models/product.dart';
+import 'package:shop/utils/consts.dart';
 
 class ProductList with ChangeNotifier {
-  final String baseUrl =
-      'https://teste-1a75c-default-rtdb.firebaseio.com/teste';
+  final String baseUrl = '${Consts.URL_BASE}/products';
   //List<Product> _items = dummyProducts;
   List<Product> _items = [];
 

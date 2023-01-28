@@ -50,28 +50,31 @@ class _OrderWidgetState extends State<OrderWidget> {
             ),
           ),
           if (_expanded)
-            Container(
-              height: (widget.order.products.length * 25) + 10,
-              child: ListView(
-                children: widget.order.products.map((product) {
-                  return Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        product.name,
-                        style: TextStyle(
-                            fontSize: 18, fontWeight: FontWeight.bold),
-                      ),
-                      Text(
-                        '${product.quantity} x ${product.price}',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.grey,
+            Padding(
+              padding: const EdgeInsets.only(left: 20, right: 10),
+              child: Container(
+                height: (widget.order.products.length * 25) + 10,
+                child: ListView(
+                  children: widget.order.products.map((product) {
+                    return Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          product.name,
+                          style: TextStyle(
+                              fontSize: 18, fontWeight: FontWeight.bold),
                         ),
-                      )
-                    ],
-                  );
-                }).toList(),
+                        Text(
+                          '${product.quantity} x ${product.price}',
+                          style: TextStyle(
+                            fontSize: 18,
+                            color: Colors.grey,
+                          ),
+                        )
+                      ],
+                    );
+                  }).toList(),
+                ),
               ),
             )
         ],
