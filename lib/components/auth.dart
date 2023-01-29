@@ -7,9 +7,9 @@ import 'package:shop/exceptions/auth_exception.dart';
 
 class Auth with ChangeNotifier {
   static const _authUrlSignUp =
-      'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyAzU3MwM2X9KUlMmf-aAhvqkm8WkBeH8VI';
+      'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=...';
   static const _authUrlSignIn =
-      'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyAzU3MwM2X9KUlMmf-aAhvqkm8WkBeH8VI';
+      'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=...';
 
   String? _token;
   String? _email;
