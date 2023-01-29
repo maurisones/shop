@@ -9,13 +9,17 @@ import 'package:shop/utils/consts.dart';
 
 class ProductList with ChangeNotifier {
   final String baseUrl = '${Consts.URL_BASE}/products';
-  //List<Product> _items = dummyProducts;
+
+  String _token;
   List<Product> _items = [];
 
   bool _showFavoriteOnly = false;
 
+  ProductList(this._token, this._items);
+
   Future<void> loadProducts() async {
-    final response = await http.get(Uri.parse('${baseUrl}.json'));
+    final response =
+        await http.get(Uri.parse('${baseUrl}.json?auth=${_token}'));
     print(jsonDecode(response.body));
 
     _items.clear();
@@ -58,7 +62,7 @@ class ProductList with ChangeNotifier {
     int index = _items.indexWhere((element) => element.id == product.id);
     if (index == -1) {
       final response = await http.post(
-        Uri.parse('${baseUrl}.json'),
+        Uri.parse('${baseUrl}.json?auth=${_token}'),
         body: jsonEncode({
           "name": product.name,
           "description": product.description,
@@ -97,8 +101,8 @@ class ProductList with ChangeNotifier {
   }
 
   Future<void> removeProduct(String productId) async {
-    final response =
-        await http.delete(Uri.parse('${baseUrl}/${productId}.json'));
+    final response = await http
+        .delete(Uri.parse('${baseUrl}/${productId}.json?auth=${_token}'));
 
     if (response.statusCode == 200) {
       int index = _items.indexWhere((element) => element.id == productId);
