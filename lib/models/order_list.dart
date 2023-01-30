@@ -1,9 +1,11 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 import 'dart:core';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+
 import 'package:shop/models/cart_item.dart';
 import 'package:shop/models/order.dart';
 
@@ -11,9 +13,17 @@ import '../utils/consts.dart';
 import 'cart.dart';
 
 class OrderList with ChangeNotifier {
-  final String baseUrl = '${Consts.URL_BASE}/orders';
+  final String baseUrlOrders = '${Consts.URL_BASE}/orders';
 
+  final String _token;
+  final String _uid;
   List<Order> _items = [];
+
+  OrderList([
+    this._token = '',
+    this._items = const [],
+    this._uid = '',
+  ]);
 
   List<Order> get items {
     return [..._items];
@@ -24,7 +34,8 @@ class OrderList with ChangeNotifier {
   }
 
   Future<void> loadOrders() async {
-    final response = await http.get(Uri.parse('${baseUrl}.json'));
+    final response = await http
+        .get(Uri.parse('${baseUrlOrders}/${_uid}.json?auth=${_token}'));
     print(jsonDecode(response.body));
 
     _items.clear();
@@ -54,7 +65,7 @@ class OrderList with ChangeNotifier {
   Future<void> addOrder(Cart cart) async {
     final DateTime date = DateTime.now();
     final response = await http.post(
-      Uri.parse('${baseUrl}.json'),
+      Uri.parse('${baseUrlOrders}/${_uid}.json?auth=${_token}'),
       body: jsonEncode(
         {
           'total': cart.totalAmount,

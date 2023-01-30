@@ -3,6 +3,7 @@ import 'package:flutter/src/widgets/container.dart';
 import 'package:flutter/src/widgets/framework.dart';
 import 'package:provider/provider.dart';
 import 'package:shop/exceptions/auth_exception.dart';
+import 'package:shop/utils/app_routes.dart';
 
 import 'auth.dart';
 
@@ -75,7 +76,7 @@ class _AuthFormState extends State<AuthForm> {
       } else {
         await auth.signUp(_authData['email']!, _authData['password']!);
       }
-      Navigator.of(context).pop();
+      Navigator.of(context).pushNamed(AppRoutes.AUTH_OR_HOME);
     } on AuthException catch (error) {
       _showErrorDialog(error.toString());
     } catch (error) {

@@ -5,11 +5,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:shop/exceptions/auth_exception.dart';
 
+import '../utils/consts.dart';
+
 class Auth with ChangeNotifier {
   static const _authUrlSignUp =
-      'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=...';
+      'https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=${Consts.APP_KEY}';
   static const _authUrlSignIn =
-      'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=...';
+      'https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${Consts.APP_KEY}';
 
   String? _token;
   String? _email;
@@ -85,5 +87,12 @@ class Auth with ChangeNotifier {
           DateTime.now().add(Duration(seconds: int.parse(body['expiresIn'])));
       notifyListeners();
     }
+  }
+
+  void logout() {
+    _token = '';
+    _email = '';
+    _uid = '';
+    _expireDate = null;
   }
 }
